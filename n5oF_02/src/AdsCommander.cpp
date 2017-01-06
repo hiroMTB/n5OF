@@ -27,6 +27,22 @@ void AdsCommander::disableAll() {
 	}
 }
 
+void AdsCommander::haltAll() {
+	for (int i = 0; i<10; i++) {
+		const Axis & a = ofApp::app->axis[i];
+		ads.writeValue<bool>(a.name + ".cmd_halt", true);
+	}
+}
+
+void AdsCommander::goToAll(int pos) {
+	for (int i = 0; i<10; i++) {
+		const Axis & a = ofApp::app->axis[i];
+		ads.writeValue<double>(a.name + ".cmd_pos", pos);
+		ads.writeValue<double>(a.name + ".cmd_vel", 500);
+		ads.writeValue<bool>(a.name + ".cmd_need_exe", true);
+	}
+}
+
 void AdsCommander::sendCmd(string name, double tarpos, double tarvel) {
 	ads.writeValue<double>(name + ".cmd_pos", tarpos);
 	ads.writeValue<double>(name + ".cmd_vel", tarvel);

@@ -11,7 +11,7 @@ ofApp * ofApp::app = NULL;
 
 void ofApp::setup() {
 
-	ofSetFrameRate(120);
+	ofSetFrameRate(25);
 	ofSetWindowShape(1500, 1000);
 	ofSetWindowPosition(0, 0);
 
@@ -26,10 +26,7 @@ void ofApp::setup() {
 
 	axis.assign(10, Axis());
 
-	axis[0].init(1);
-	axis[1].init(0);
-
-	for (int i = 2; i<axis.size(); i++) {
+	for (int i = 0; i<axis.size(); i++) {
 		axis[i].init(i);
 	}
 
@@ -198,7 +195,7 @@ void ofApp::draw_target() {
 			if (i<5) x -= pixpos;
 			else    x += pixpos;
 
-			ofSetColor(255, 0, 0);
+			ofSetColor( 0, 255, 0);
 			ofCircle(x, y, 6);
 			ofDrawBitmapString(ofToString(a.tarpos, 2), x - 12, y - 18);
 		}
@@ -221,7 +218,7 @@ void ofApp::draw_dump() {
 		}
 
 		int onoff = a.dump[current_frame].onoff;
-		ofSetColor(0, 255, 0);
+		ofSetColor(255, 0, 0);
 
 		ofFill();
 		ofCircle(x, y, 6);
@@ -293,7 +290,7 @@ void ofApp::draw_rail_num() {
 		if (i<5) x += 45;
 		else    x -= 70;
 		ofSetColor(150, 0, 0);
-		ofDrawBitmapString(ofToString(i), x, y);
+		ofDrawBitmapString(ofToString(i+1), x, y);
 		ofNoFill();
 		ofRect(x - 15, y - 40, 50, 50);
 	}
@@ -310,9 +307,12 @@ void ofApp::keyPressed(int key) {
 	case OF_KEY_RIGHT: current_frame = normalize_frame(current_frame + 1); break;
 	case OF_KEY_LEFT: current_frame = normalize_frame(current_frame - 1); break;
 
-	case 'e': adsCmd.enableAll(); 			break;
-	case 'r': adsCmd.disableAll();			break;
-	case 'v': bDrawVid = !bDrawVid; break;
+	case 'e': adsCmd.enableAll(); 		break;
+	case 'r': adsCmd.disableAll();		break;
+	case 'v': bDrawVid = !bDrawVid;		 break;
+	case 'h': adsCmd.haltAll();			 break;
+	case 'g': adsCmd.goToAll(ofRandom(200,800));		 break;
+
 	}
 }
 
