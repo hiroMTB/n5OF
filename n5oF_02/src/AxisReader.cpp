@@ -4,14 +4,13 @@
 #include "Axis.h"
 
 AxisReader::AxisReader() {
-	sleep_ms = 10;
 }
 
 void AxisReader::init(ofApp * _app) {
 	app = _app;
 }
 
-void AxisReader::start( int _sleep_ms) {
+void AxisReader::start( int _sleep_ms=5) {
 	sleep_ms = _sleep_ms;
 	startThread();
 }
@@ -28,7 +27,7 @@ void AxisReader::threadedFunction() {
 
 			vector<Axis> & axis = app->axis;
 			for (int i = 0; i < axis.size(); i++) {
-				axis[i].read();
+				ofApp::app->adsCmd.readStatus(axis[i]);
 			}
 
 			unlock();
@@ -36,9 +35,6 @@ void AxisReader::threadedFunction() {
 
 		}
 		else {
-			// If we reach this else statement, it means that we could not
-			// lock our mutex, and so we do not need to call unlock().
-			// Calling unlock without locking will lead to problems.
 			//ofLogWarning("threadedFunction()") << "Unable to lock mutex.";
 		}
 	}

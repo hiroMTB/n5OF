@@ -10,13 +10,18 @@ public:
 
 	AdsCommander();
 	static void init();
+
+	static void enable( string name );
+	static void disable( string name );
+	static void halt( string name );
+	static void goTo( string name, int pos, int vel=500);
+	static void home( string name );
+
 	static void enableAll();
 	static void disableAll();
 	static void haltAll();
-	static void goToAll(int pos_mm);
+	static void goToAll(int pos, int vel=500);
 	static void homeAll();
-
-	static void sendCmd(string name, double tarpos, double tarvel);
 	static void readStatus(Axis & axis);
 
 	static ofxBeckhoffADS ads;

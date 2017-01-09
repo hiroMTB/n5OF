@@ -4,7 +4,6 @@
 extern double pix2mm;
 extern double mm2pix;
 
-
 Axis::Axis() {
 	current_cmd.tarpos_p = -123;
 	current_cmd.tarvel_p = -123;
@@ -32,31 +31,22 @@ void Axis::init(int _id) {
 	loadDumpCsv();
 }
 
-void Axis::sendCmd(int current_frame) {
+void Axis::update(int current_frame) {
 	if (cmdData.find(current_frame) != cmdData.end()) {
 		CmdData & c = cmdData[current_frame];
 		tarpos = c.tarpos_p*cmd_scale*pix2mm;
 		tarvel = c.tarvel_p*cmd_scale*pix2mm * 25.0;
 
-		ofApp::app->adsCmd.sendCmd(name, tarpos, abs(tarvel));
+		ofApp::app->adsCmd.goTo(name, tarpos, abs(tarvel));
 		current_cmd = c;
-
-		//printf("send cmd : axis%02d, target pos = %7.2f, target vel %7.2f\n", id+1, tarpos, abs(tarvel));
-
 	}
 }
-
-void Axis::read() {
-	ofApp::app->adsCmd.readStatus(*this);
-}
-
 
 /*
 
 FILE I/O
 
 */
-
 vector<string> split(const string &s, char delim) {
 	vector<string> elems;
 	stringstream ss(s);
@@ -87,8 +77,7 @@ void Axis::loadCmdCsv() {
 			int frame = ofToInt(cmds[0]);
 			float tPos_pix = ofToFloat(cmds[1]);     // pix
 			float sSpd_pix = ofToFloat(cmds[2]);     // pix/s
-													 //float eSpd_pix = ofToFloat(cmds[3]);   // pix/s2            
-
+													 //float eSpd_pix = ofToFloat(cmds[3]);   // pix/s2
 			CmdData d;
 			d.frame = frame;
 			d.tarpos_p = tPos_pix;

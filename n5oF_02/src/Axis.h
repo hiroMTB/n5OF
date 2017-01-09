@@ -27,16 +27,14 @@ public:
 	void init(int id);
 	void loadCmdCsv();
 	void loadDumpCsv();
-	void sendCmd(int currnet_frame);
-	void read();
+	void update(int currnet_frame);
+
+public:
 
 	int id;
-	double cmd_scale;
-
-	string name;
-
 	int state;
-	CmdData current_cmd;
+	double cmd_scale;
+	string name;
 
 	double tarpos;	//	mm
 	double tarvel;
@@ -47,6 +45,7 @@ public:
 	double actvel;
 	double actacc;
 
+	CmdData current_cmd;
 	map<int, CmdData> cmdData;
 	vector<DumpData> dump;
 
