@@ -311,6 +311,8 @@ void ofApp::keyPressed(int key) {
 	case 'r': adsCmd.disableAll();		break;
 	case 'v': bDrawVid = !bDrawVid;		 break;
 	case 'h': adsCmd.haltAll();			 break;
+	case 'o': adsCmd.homeAll();			 break;
+
 	case 'g': adsCmd.goToAll(ofRandom(200,800));		 break;
 
 	}

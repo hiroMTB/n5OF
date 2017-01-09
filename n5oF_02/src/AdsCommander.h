@@ -14,6 +14,7 @@ public:
 	static void disableAll();
 	static void haltAll();
 	static void goToAll(int pos_mm);
+	static void homeAll();
 
 	static void sendCmd(string name, double tarpos, double tarvel);
 	static void readStatus(Axis & axis);

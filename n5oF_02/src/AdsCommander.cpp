@@ -34,6 +34,13 @@ void AdsCommander::haltAll() {
 	}
 }
 
+void AdsCommander::homeAll() {
+	for (int i = 0; i<10; i++) {
+		const Axis & a = ofApp::app->axis[i];
+		ads.writeValue<bool>(a.name + ".cmd_need_home", true);
+	}
+}
+
 void AdsCommander::goToAll(int pos) {
 	for (int i = 0; i<10; i++) {
 		const Axis & a = ofApp::app->axis[i];
