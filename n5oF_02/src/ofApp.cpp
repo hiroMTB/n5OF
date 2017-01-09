@@ -64,6 +64,7 @@ void ofApp::setup() {
 	else 
 		cout << "load movie ERROR" << endl;
 	
+	vid.play();
 	bDrawVid = true;
 
 	adsCmd.init();
@@ -162,7 +163,7 @@ void ofApp::draw() {
 
 	if (bDrawVid) {
 		ofPushMatrix(); {
-			ofSetColor(255);
+			ofSetHexColor(0xFFFFFF);
 			vid.draw(0, 0);
 		} ofPopMatrix();
 	}
