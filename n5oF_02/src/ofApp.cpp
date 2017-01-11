@@ -1,9 +1,5 @@
 #include "ofApp.h"
 
-using namespace std;
-#include <iostream>
-#include <fstream>
-
 extern double pix2mm;
 extern double mm2pix;
 
@@ -12,13 +8,16 @@ ofApp * ofApp::app = NULL;
 void ofApp::setup() {
 
 	ofSetFrameRate(25);
-	ofSetWindowShape(1500, 1000);
-	ofSetWindowPosition(0, 0);
+	ofSetFullscreen(false);
+	ofSetWindowShape(1500, 1080);
+	ofSetWindowPosition(0, 30);
+	svg_scale = 0.3333333;
+	bFlip = true;
 
 	svg.load("n5_guide.svg");
-	svg_scale = 0.3333333;
 
 	screen_scale = 1; //17500.0/18000.0;
+	
 	current_frame = 0;
 	max_frame = 25 * 60 * 8;
 	sync_offset_frame = 0;
@@ -161,21 +160,28 @@ void ofApp::draw() {
 	ofBackground(0);
 	ofTranslate(30, 30);
 
-	if (bDrawVid) {
-		ofPushMatrix(); {
-			ofSetHexColor(0xFFFFFF);
-			vid.draw(0, 0);
-		} ofPopMatrix();
+	ofPushMatrix();
+	if (bFlip) {
+		ofTranslate(1440, 0, 0);
+		ofScale(-1, 1, 1);
 	}
+		if (bDrawVid) {
+			ofPushMatrix(); {
+				ofSetHexColor(0xFFFFFF);
+				vid.draw(0, 0);
+			} ofPopMatrix();
+		}
 
-	ofPushMatrix(); {
-		ofScale(svg_scale, svg_scale, 1);
-		svg.draw();
-		draw_target();
-		draw_dump();
-		draw_actual();
-		draw_rail_num();
-	} ofPopMatrix();
+		ofPushMatrix(); {
+			ofScale(svg_scale, svg_scale, 1);
+			svg.draw();
+			draw_target();
+			draw_dump();
+			draw_actual();
+			draw_rail_num();
+		} ofPopMatrix();
+
+	ofPopMatrix();
 
 	ofPushMatrix(); {
 		ofTranslate(0, 700);
@@ -255,6 +261,7 @@ void ofApp::draw_info() {
 
 	char mm[255];
 	stringstream ss;
+	ss << "Flip      : " << (bFlip ? "ON" : "OFF") << "\n";
 	ss << "Fps       : " << ofGetFrameRate() << "\n";
 	ss << "Sync Mode : ";
 	switch (sync_mode) {
@@ -268,13 +275,14 @@ void ofApp::draw_info() {
 	ss << "Frame     : " << current_frame << "\n";
 	ss << "Time sec  : " << current_frame / 25.0 << "\n" << "\n";
 
-
-	sprintf(mm, "%-4s  %-5s  %-20s  %-8s  %-8s  %-8s  %-8s", "Axis", "state", "name", "tarpos", "actpos", "tarvel", "actvel");
+	sprintf(mm, "%-4s  %-20s  %-8s  %-8s  %-8s  %-8s  %-8s  %-8s  %-8s  %-8s  %-15s  %-3s",
+		"Axis", "name", "tarpos", "actpos", "tarvel", "actvel", "Error", "ErrorID", "Disabled", "Homed", "motion state", "prg" );
 	ss << mm << "\n";
 
 	for (int i = 0; i<axis.size(); i++) {
 		Axis &a = axis[i];
-		sprintf(mm, "%4d  %5d  %20s  %8.2f  %8.2f  %8.2f  %8.2f", i + 1, a.state, a.name.c_str(), a.tarpos, a.actpos, a.tarvel, a.actvel);
+		sprintf(mm, "%4d  %20s  %8.2f  %8.2f  %8.2f  %8.2f  %8d  %8d  %8d  %8d  %15s  %3d",
+				i + 1, a.name.c_str(), a.tarpos, a.actpos, a.tarvel, a.actvel, a.Error, a.ErrorID, a.Disabled, a.Homed, Axis::MC_MotionSate[a.motion_state], a.state);
 		ss << mm << "\n";
 	}
 
@@ -286,13 +294,13 @@ void ofApp::draw_rail_num() {
 
 	for (int i = 0; i<10; i++) {
 		float x = home_pos[i].x;
-		float y = home_pos[i].y + 10;
+		float y = home_pos[i].y-8;
 		if (i<5) x += 45;
 		else    x -= 70;
 		ofSetColor(150, 0, 0);
 		ofDrawBitmapString(ofToString(i+1), x, y);
-		ofNoFill();
-		ofRect(x - 15, y - 40, 50, 50);
+		//ofNoFill();
+		//ofRect(x - 15, y - 40, 50, 50);
 	}
 }
 
@@ -312,7 +320,9 @@ void ofApp::keyPressed(int key) {
 		case 'v': bDrawVid = !bDrawVid;		 break;
 		case 'h': adsCmd.haltAll();			 break;
 		case 'o': adsCmd.homeAll();			 break;
-		case 'g': adsCmd.goToAll(ofRandom(200,800));		 break;
+		case 'g': adsCmd.goToAll(ofRandom(200,800)); break;
+		case 'f': bFlip = !bFlip;			 break;
+
 	}
 }
 

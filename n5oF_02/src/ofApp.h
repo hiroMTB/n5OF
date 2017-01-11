@@ -42,6 +42,7 @@ public:
 
 	bool bStop;
 	bool bDrawVid;
+	bool bFlip;
 	int sync_mode;			// 0:standalone, 1:osc, 2:smpte
 	float screen_scale;
 	int current_frame;

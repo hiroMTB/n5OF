@@ -68,4 +68,11 @@ void AdsCommander::readStatus(Axis &a) {
 	a.actvel = ads.readValue<double>(a.name + ".actual_vel", -123);
 	//a.actacc = ads.readValue<double>(name[i]+".actual_acc", -123);
 	a.state = ads.readValue<short>(a.name + ".state", -123);
+
+	a.Error = ads.readValue<bool>(a.name + ".axis.Status.Error", false);
+	a.ErrorID = ads.readValue<int>(a.name + ".axis.Status.ErrorID", -123);
+	a.Disabled = ads.readValue<bool>(a.name + ".axis.Status.Disabled", false);
+	a.Homed = ads.readValue<bool>(a.name + ".axis.Status.Homed", false);
+	a.motion_state= ads.readValue<short>(a.name + ".axis.Status.MotionState", -123);
+
 }

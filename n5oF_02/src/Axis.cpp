@@ -1,8 +1,27 @@
 #include "Axis.h"
 #include "ofApp.h"
 
+using namespace std;
+#include <iostream>
+#include <fstream>
+
 extern double pix2mm;
 extern double mm2pix;
+
+// https://infosys.beckhoff.com/index.php?content=../content/1031/tcplclib_tc2_mc2/18014398579628043.html&id=
+map<int, string> Axis::MC_MotionSate = {
+	pair<int, string>(0, "UNDEFINED"),
+	pair<int, string>(1, "DISABLED"),
+	pair<int, string>(2, "STANDSTILL"),
+	pair<int, string>(3, "ERRORSTOP"),
+	pair<int, string>(4, "STOPPING"),
+	pair<int, string>(5, "HOMING"),
+	pair<int, string>(6, "DISCRETEMOTION"),
+	pair<int, string>(7, "CONTINOUSMOTION"),
+	pair<int, string>(8, "SYNCHRONIZEDMOTION")
+};
+
+
 
 Axis::Axis() {
 	current_cmd.tarpos_p = -123;

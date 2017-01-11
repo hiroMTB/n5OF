@@ -29,10 +29,17 @@ public:
 	void loadDumpCsv();
 	void update(int currnet_frame);
 
+	static map<int, string> MC_MotionSate;
+
 public:
 
 	int id;
 	int state;
+	bool Error;
+	int ErrorID;
+	bool Disabled;
+	bool Homed;
+	int motion_state;
 	double cmd_scale;
 	string name;
 
