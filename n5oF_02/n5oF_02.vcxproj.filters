@@ -10,9 +10,6 @@
     <ClCompile Include="..\..\..\addons\ofxBeckhoffADS\src\ofxBeckhoffADS.cpp">
       <Filter>addons\ofxBeckhoffADS</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\addons\ofxLtcReader\src\ofxLtcReader.cpp">
-      <Filter>addons\ofxLtcReader</Filter>
-    </ClCompile>
     <ClCompile Include="src\AdsCommander.cpp">
       <Filter>src</Filter>
     </ClCompile>
@@ -84,9 +81,6 @@
     <Filter Include="addons\ofxBeckhoffADS">
       <UniqueIdentifier>{2adb5a0d-28cc-4217-86cd-02052cb8d045}</UniqueIdentifier>
     </Filter>
-    <Filter Include="addons\ofxLtcReader">
-      <UniqueIdentifier>{4c05899f-648f-48a6-86ef-4b9e939b8779}</UniqueIdentifier>
-    </Filter>
     <Filter Include="addons\ofxOsc">
       <UniqueIdentifier>{b1d00b64-d796-44aa-b940-26d7bf91c191}</UniqueIdentifier>
     </Filter>
@@ -114,6 +108,9 @@
     <Filter Include="addons\ofxSvg">
       <UniqueIdentifier>{2a2e5b88-a345-4475-a2a6-cb3e8d929d28}</UniqueIdentifier>
     </Filter>
+    <Filter Include="csv">
+      <UniqueIdentifier>{5a75e07d-09fb-4757-b75c-ab9ae28f3e4e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\ofApp.h">
@@ -127,9 +124,6 @@
     </ClInclude>
     <ClInclude Include="..\..\..\addons\ofxBeckhoffADS\src\ofxBeckhoffADS.h">
       <Filter>addons\ofxBeckhoffADS</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\addons\ofxLtcReader\src\ofxLtcReader.h">
-      <Filter>addons\ofxLtcReader</Filter>
     </ClInclude>
     <ClInclude Include="src\def.h">
       <Filter>src</Filter>
@@ -215,5 +209,37 @@
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="icon.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="bin\data\cmd\CMD_0.csv">
+      <Filter>csv</Filter>
+    </None>
+    <None Include="bin\data\cmd\CMD_1.csv">
+      <Filter>csv</Filter>
+    </None>
+    <None Include="bin\data\cmd\CMD_2.csv">
+      <Filter>csv</Filter>
+    </None>
+    <None Include="bin\data\cmd\CMD_3.csv">
+      <Filter>csv</Filter>
+    </None>
+    <None Include="bin\data\cmd\CMD_4.csv">
+      <Filter>csv</Filter>
+    </None>
+    <None Include="bin\data\cmd\CMD_5.csv">
+      <Filter>csv</Filter>
+    </None>
+    <None Include="bin\data\cmd\CMD_6.csv">
+      <Filter>csv</Filter>
+    </None>
+    <None Include="bin\data\cmd\CMD_7.csv">
+      <Filter>csv</Filter>
+    </None>
+    <None Include="bin\data\cmd\CMD_8.csv">
+      <Filter>csv</Filter>
+    </None>
+    <None Include="bin\data\cmd\CMD_9.csv">
+      <Filter>csv</Filter>
+    </None>
   </ItemGroup>
 </Project>

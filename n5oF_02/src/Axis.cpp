@@ -29,8 +29,6 @@ Axis::Axis() {
 	current_cmd.taracc_p = -123;
 	current_cmd.endvel_p = 0;
 
-	cmd_scale = 0.2;
-
 	tarpos = -123;
 	tarvel = -123;
 	taracc = -123;
@@ -43,9 +41,24 @@ Axis::Axis() {
 	name = "AxisNameError";
 }
 
-void Axis::init(int _id) {
+void Axis::init(int _id, float min, float max ) {
 	id = _id;
+
+	/*
+	float effectiveLen = max - min;
+	cmd_scale = effectiveLen / 5000.0;
+	cmd_offset = min;
+	*/
+
+	float axisLen = (max-min)*(1200.0/1160.0);
+	cmd_scale = axisLen / 5000.0;
+	cmd_offset = min - (20.0*cmd_scale*pix2mm);
+	
 	name = "MAIN.axisCtrls[" + ofToString(id + 1) + "]";
+	
+	char m[255];
+	sprintf(m, "Axis %02d : cmd_scale=%4.5f, cmd_offset=%4.2f", id+1, cmd_scale, cmd_offset);
+	cout << m << endl;
 	loadCmdCsv();
 	loadDumpCsv();
 }
@@ -53,11 +66,16 @@ void Axis::init(int _id) {
 void Axis::update(int current_frame) {
 	if (cmdData.find(current_frame) != cmdData.end()) {
 		CmdData & c = cmdData[current_frame];
-		tarpos = c.tarpos_p*cmd_scale*pix2mm;
+		tarpos = cmd_offset + c.tarpos_p * pix2mm * cmd_scale;
 		tarvel = c.tarvel_p*cmd_scale*pix2mm * 25.0;
 
-		ofApp::app->adsCmd.goTo(name, tarpos, abs(tarvel));
-		current_cmd = c;
+		if (Homed && Error==0) {
+			//if (current_cmd.frame != current_frame) {
+				ofApp::app->adsCmd.goTo(name, tarpos, abs(tarvel));
+				current_cmd = c;
+				cout << "Cmd : " << c.frame << ", "<< name << ", " << tarpos << "," << tarvel << endl;
+			//}
+		}
 	}
 }
 
@@ -86,7 +104,7 @@ void Axis::loadCmdCsv() {
 		cout << "Error : Cant open file : " << path << endl;
 	}
 	else {
-		cout << "open : " << fileName << endl;
+		//cout << "open : " << fileName << endl;
 		string line;
 		int cnt = 0;
 		while (std::getline(file, line)) {
@@ -117,7 +135,7 @@ void Axis::loadDumpCsv() {
 		cout << "Error : Cant open file : " << path << endl;
 	}
 	else {
-		cout << "open : " << fileName << endl;
+		//cout << "open : " << fileName << endl;
 		string line;
 		int cnt = 0;
 		while (std::getline(file, line)) {

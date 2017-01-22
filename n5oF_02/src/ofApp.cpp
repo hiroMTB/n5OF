@@ -7,7 +7,8 @@ ofApp * ofApp::app = NULL;
 
 void ofApp::setup() {
 
-	ofSetFrameRate(25);
+	ofSetEscapeQuitsApp(false);
+	ofSetFrameRate(120);
 	ofSetFullscreen(false);
 	ofSetWindowShape(1500, 1080);
 	ofSetWindowPosition(0, 30);
@@ -16,28 +17,20 @@ void ofApp::setup() {
 
 	svg.load("n5_guide.svg");
 
-	screen_scale = 1; //17500.0/18000.0;
-	
 	current_frame = 0;
 	max_frame = 25 * 60 * 8;
-	sync_offset_frame = 0;
-	sync_mode = 0;
+	sync_offset_frame = -2;
+	sync_mode = 1;
 
 	axis.assign(10, Axis());
 
+
 	for (int i = 0; i<axis.size(); i++) {
-		axis[i].init(i);
+		axis[i].init(i, carib_min[i], carib_max[i]);
 	}
 
-	// SMPTE LTC setup
-	snd.listDevices();
-	snd.setDeviceID(3);
-	snd.setup(this, 0, 2, 48000, 64, 4);
-	snd.stop();
-	ltc.setup(&snd, 25);
-	
 	// OSC
-	OSC_PORT = 9999;
+	OSC_PORT = 64008;
 	oscR.setup(OSC_PORT);
 	bStop = false;
 
@@ -70,17 +63,16 @@ void ofApp::setup() {
 	adsCmd.enableAll();
 
 	axisReader.init(app);
-	axisReader.start(4);
+	axisReader.start(20);
+	
 }
 
 void ofApp::update() {
 
 	if (!bStop) {
-		if (mode == N5OF_SYNC) {
 			switch (sync_mode) {
 			case 0: sync_standalone(); break;
 			case 1: sync_osc();   break;
-			case 2: sync_smpte(); break;
 			default: break;
 			}
 
@@ -88,62 +80,38 @@ void ofApp::update() {
 				Axis &a = axis[i];
 				a.update(current_frame);
 			}
-		}
-		else if (mode == N5OF_TEST) {
-			for (int i = 0; i < axis.size(); i++) {
-				Axis &a = axis[i];
-				//adsCmd.sendCmd();
-			}
-		}
 	}
 
-	if (current_frame != vid.getCurrentFrame() && current_frame<vid.getTotalNumFrames()) {
+	if (current_frame!=vid.getCurrentFrame() && current_frame<vid.getTotalNumFrames()) {
 		vid.setFrame(current_frame);
 		vid.update();
 	}
 }
 
-void ofApp::audioIn( ofSoundBuffer & buf ){
-	float sum = 0;
-
-	if (sync_mode == 2) {
-		vector<float> & input = buf.getBuffer();
-		int nCh = buf.getNumChannels();
-
-		ltc.readLtc(&input[0], nCh, 1);
-		int m = ltc.ltcMinute();
-		int s = ltc.ltcSecond();
-		int f = ltc.ltcFrame();
-		current_frame = (m * 60 + s) * 25 + f;
-		//current_frame = normalize_frame(current_frame);
-
-		current_frame %= max_frame;
-
-		ltcAmp = buf.getRMSAmplitudeChannel(0);
-	}
-}
-
 void ofApp::sync_standalone() {
-	current_frame = normalize_frame(current_frame + 1);
+	current_frame = normalize_frame(current_frame+1);
 }
 
 void ofApp::sync_osc() {
+
+	bOscReceived = false;
+
 	while (oscR.hasWaitingMessages()) {
+
+		bOscReceived = true;
 		ofxOscMessage m;
 		oscR.getNextMessage(&m);
 
-		if (m.getAddress() == "/frame/1") {
-			float frame = m.getArgAsFloat(0);     // ToscA output 0 - 12000
-			current_frame = normalize_frame(round(frame));
+		if (m.getAddress() == "/data") {
+			float frame = m.getArgAsFloat(0) * 37500.0;     // ToscA output 0 - 32
+			frame += sync_offset_frame;
+			current_frame = normalize_frame(floor(frame));
 		}
 		else {
 			cout << "OSC error, unknown messages" << endl;
 			cout << "address : " << m.getAddress() << endl;
 		}
 	}
-}
-
-void ofApp::sync_smpte() {
 }
 
 int ofApp::normalize_frame(int frame) {
@@ -223,6 +191,8 @@ void ofApp::draw_dump() {
 			x += pixpos;
 		}
 
+		x += a.cmd_offset*mm2pix*a.cmd_scale;
+
 		int onoff = a.dump[current_frame].onoff;
 		ofSetColor(255, 0, 0);
 
@@ -234,8 +204,10 @@ void ofApp::draw_dump() {
 			ofCircle(x, y, 75);
 		}
 
-		float realpos = pixpos * pix2mm * a.cmd_scale;
+		float realpos = pixpos * pix2mm * a.cmd_scale + a.cmd_offset;
 		ofDrawBitmapString(ofToString(realpos, 2), x - 12, y + 55);
+
+		axis[i].dumpPos = realpos;
 	}
 }
 
@@ -266,10 +238,11 @@ void ofApp::draw_info() {
 	ss << "Sync Mode : ";
 	switch (sync_mode) {
 	case 0: ss << "Stand Alone" << "\n"; break;
-	case 1: ss << "OSC, port " << OSC_PORT << "\n"; break;
-	case 2:
-		ss << "SMPTE LTC : amp " << ltcAmp << "\n";
-		break;
+	case 1: 
+		ss << "OSC, port " << OSC_PORT;
+		if (bOscReceived) ss << ", message received" << "\n";
+		else ss << "\n";
+ 		break;
 	}
 
 	ss << "Frame     : " << current_frame << "\n";
@@ -306,9 +279,8 @@ void ofApp::draw_rail_num() {
 
 void ofApp::keyPressed(int key) {
 	switch (key) {
-		case '0': sync_mode = 0; break;
-		case '1': sync_mode = 1; break;
-		case '2': sync_mode = 2; break;
+		case '0': sync_mode = 0; ofSetFrameRate(25);  break;	 // standalone
+		case '1': sync_mode = 1; ofSetFrameRate(120); break; // osc
 		case ' ': bStop = !bStop; break;
 		case '>': current_frame = normalize_frame(current_frame + 100);  break;
 		case '<': current_frame = normalize_frame(current_frame - 100); break;
@@ -319,16 +291,23 @@ void ofApp::keyPressed(int key) {
 		case 'r': adsCmd.disableAll();		break;
 		case 'v': bDrawVid = !bDrawVid;		 break;
 		case 'h': adsCmd.haltAll();			 break;
-		case 'o': adsCmd.homeAll();			 break;
-		case 'g': adsCmd.goToAll(ofRandom(200,800)); break;
+		//case 'o': adsCmd.homeAll();			 break;
+		case 'g': adsCmd.goToAll(ofRandom(500,4500), 2000); break;
 		case 'f': bFlip = !bFlip;			 break;
-
+		case 'd':
+			for (int i = 0; i < 10; i++) {
+				if (axis[i].Homed && !axis[i].Error) {
+					if(50<axis[i].dumpPos && axis[i].dumpPos<4950)
+						adsCmd.goTo(axis[i].name, axis[i].dumpPos, 2000);
+				}
+			}
+		break;
 	}
 }
 
 void ofApp::exit() {
 	adsCmd.disableAll();
-	snd.stop();
-	snd.close();
-	axisReader.stop();
+	if (axisReader.isThreadRunning()) {
+		axisReader.stop();
+	}
 }

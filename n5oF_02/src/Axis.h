@@ -24,7 +24,7 @@ class Axis {
 public:
 
 	Axis();
-	void init(int id);
+	void init(int id, float pix20, float pix1180);
 	void loadCmdCsv();
 	void loadDumpCsv();
 	void update(int currnet_frame);
@@ -52,8 +52,13 @@ public:
 	double actvel;
 	double actacc;
 
+	double dumpPos;
+
 	CmdData current_cmd;
 	map<int, CmdData> cmdData;
 	vector<DumpData> dump;
+
+	float cmd_cale;
+	float cmd_offset;
 
 };

@@ -173,7 +173,6 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\addons\ofxBeckhoffADS\src\ofxBeckhoffADS.cpp" />
-    <ClCompile Include="..\..\..\addons\ofxLtcReader\src\ofxLtcReader.cpp" />
     <ClCompile Include="..\..\..\addons\ofxOsc\libs\oscpack\src\ip\IpEndpointName.cpp" />
     <ClCompile Include="..\..\..\addons\ofxOsc\libs\oscpack\src\ip\win32\NetworkingUtils.cpp" />
     <ClCompile Include="..\..\..\addons\ofxOsc\libs\oscpack\src\ip\win32\UdpSocket.cpp" />
@@ -201,7 +200,6 @@
     <ClInclude Include="..\..\..\addons\ofxBeckhoffADS\include\TcAdsAPI.h" />
     <ClInclude Include="..\..\..\addons\ofxBeckhoffADS\include\TcAdsDef.h" />
     <ClInclude Include="..\..\..\addons\ofxBeckhoffADS\src\ofxBeckhoffADS.h" />
-    <ClInclude Include="..\..\..\addons\ofxLtcReader\src\ofxLtcReader.h" />
     <ClInclude Include="..\..\..\addons\ofxOsc\libs\oscpack\src\ip\IpEndpointName.h" />
     <ClInclude Include="..\..\..\addons\ofxOsc\libs\oscpack\src\ip\NetworkingUtils.h" />
     <ClInclude Include="..\..\..\addons\ofxOsc\libs\oscpack\src\ip\PacketListener.h" />
@@ -242,6 +240,18 @@
       <AdditionalOptions Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">/D_DEBUG %(AdditionalOptions)</AdditionalOptions>
       <AdditionalIncludeDirectories>$(OF_ROOT)\libs\openFrameworksCompiled\project\vs</AdditionalIncludeDirectories>
     </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="bin\data\cmd\CMD_0.csv" />
+    <None Include="bin\data\cmd\CMD_1.csv" />
+    <None Include="bin\data\cmd\CMD_2.csv" />
+    <None Include="bin\data\cmd\CMD_3.csv" />
+    <None Include="bin\data\cmd\CMD_4.csv" />
+    <None Include="bin\data\cmd\CMD_5.csv" />
+    <None Include="bin\data\cmd\CMD_6.csv" />
+    <None Include="bin\data\cmd\CMD_7.csv" />
+    <None Include="bin\data\cmd\CMD_8.csv" />
+    <None Include="bin\data\cmd\CMD_9.csv" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ProjectExtensions>
