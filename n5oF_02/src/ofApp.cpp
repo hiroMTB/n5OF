@@ -12,7 +12,6 @@ void ofApp::setup() {
 	ofSetFullscreen(false);
 	ofSetWindowShape(1500, 1080);
 	ofSetWindowPosition(0, 30);
-	svg_scale = 0.3333333;
 	bFlip = true;
 
 	svg.load("n5_guide.svg");
@@ -51,11 +50,15 @@ void ofApp::setup() {
 		home_pos[i].x = home_pos[i].x + 1200;
 	}
 
-	if (vid.loadMovie("n5_alpha_s_h264.mov"))
+	//string movFileName = "n5_alpha_s_h264.mov";
+	string movFileName = "n5_ref.mov";
+
+	if (vid.loadMovie(movFileName))
 		cout << "load movie OK" << endl;
 	else 
 		cout << "load movie ERROR" << endl;
-	
+
+	svg_scale = vid.getWidth() / (1080.0*4.0);
 	vid.play();
 	bDrawVid = true;
 
@@ -130,7 +133,7 @@ void ofApp::draw() {
 
 	ofPushMatrix();
 	if (bFlip) {
-		ofTranslate(1440, 0, 0);
+		ofTranslate(vid.getWidth(), 0, 0);
 		ofScale(-1, 1, 1);
 	}
 		if (bDrawVid) {
