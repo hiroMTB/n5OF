@@ -9,7 +9,8 @@ public:
 	double tarpos_p;	// pix
 	double tarvel_p;	// pix
 	double taracc_p;	// pix
-	double endvel_p;	// pix
+	double tardeacc_p;	// pix
+	double tarjerk_p;	
 };
 
 class DumpData {
@@ -24,7 +25,7 @@ class Axis {
 public:
 
 	Axis();
-	void init(int id);
+	void init(int id, float pix20, float pix1180);
 	void loadCmdCsv();
 	void loadDumpCsv();
 	void update(int currnet_frame);
@@ -34,8 +35,8 @@ public:
 public:
 
 	int id;
-	int state;
-	bool Error;
+	//int state;
+	//bool Error;
 	int ErrorID;
 	bool Disabled;
 	bool Homed;
@@ -45,15 +46,20 @@ public:
 
 	double tarpos;	//	mm
 	double tarvel;
-	double taracc;
-	double endvel;
+	//double taracc;
+	//double tardeacc;
+	//double tarjerk;
 
 	double actpos;	// mm
-	double actvel;
-	double actacc;
+	//double actvel;
+
+	double dumpPos;
 
 	CmdData current_cmd;
 	map<int, CmdData> cmdData;
 	vector<DumpData> dump;
+
+	float cmd_cale;
+	float cmd_offset;
 
 };

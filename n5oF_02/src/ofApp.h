@@ -11,11 +11,6 @@
 class ofApp : public ofBaseApp {
 public:
 
-	enum N5OF_MODE {
-		N5OF_SYNC = 0,
-		N5OF_TEST,
-	};
-
 	static ofApp * app;
 	static void init() { app = new ofApp(); }
 
@@ -31,26 +26,20 @@ public:
 	void draw_rail_num();
 
 	void keyPressed(int key);
-	void audioIn(ofSoundBuffer& buffer);
 	void sync_osc();
-	void sync_smpte();
 	void sync_standalone();
 	int normalize_frame(int frame);
-	int round(float val) { return (int)(std::floor(val + 0.5));	}
 
 public:
 
 	bool bStop;
+	bool bOscReceived;
 	bool bDrawVid;
 	bool bFlip;
-	int sync_mode;			// 0:standalone, 1:osc, 2:smpte
-	float screen_scale;
+	int sync_mode;			// 0:standalone, 1:osc
 	int current_frame;
 	int max_frame;
 
-	N5OF_MODE mode;
-	ofxLtcReader ltc;
-	ofSoundStream snd;
 	ofxOscReceiver oscR;
 	int OSC_PORT;
 	int sync_offset_frame;
@@ -65,7 +54,6 @@ public:
 	AdsCommander adsCmd;
 	AxisReader axisReader;
 
-	float ltcAmp;
-	int smpteCh;
-
+	vector<float> carib_min = { 250, 120, 210, 120, 200, 140, 150, 180, 90, 110 };
+	vector<float> carib_max = { 4900, 4800, 4910, 4800, 4900, 4780, 4750, 4870, 4700, 4800 };
 };

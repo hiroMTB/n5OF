@@ -14,13 +14,13 @@ public:
 	static void enable( string name );
 	static void disable( string name );
 	static void halt( string name );
-	static void goTo( string name, int pos, int vel=500);
+	static void goTo(string name, float pos, float vel=500);
 	static void home( string name );
 
 	static void enableAll();
 	static void disableAll();
 	static void haltAll();
-	static void goToAll(int pos, int vel=500);
+	static void goToAll(float pos,float vel=500);
 	static void homeAll();
 	static void readStatus(Axis & axis);
 

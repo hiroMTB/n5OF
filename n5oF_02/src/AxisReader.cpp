@@ -1,4 +1,4 @@
-#pragma once
+
 #include "AxisReader.h"
 #include "ofApp.h"
 #include "Axis.h"
